@@ -12,8 +12,6 @@ const getRandomInt = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-const operators = ['+', '-', '*', '/'];
-
 export const generateQuestion = (difficulty: Difficulty): Question => {
   let parts: string[] = [];
   let answer = 0;
@@ -70,35 +68,12 @@ export const generateQuestion = (difficulty: Difficulty): Question => {
       // Format: (a op1 b) op2 (c op3 d) = e OR a op1 b op2 c = d
       // Let's go with 3 operators for hard.
       const ops = ['+', '-', '*', '/'];
-      let a, b, c, d, result;
+      let a, b, c, result;
       
       // Simple strategy: build the equation and evaluate it.
       // To ensure integer results for division: a = b * k
-      const op1 = ops[getRandomInt(0, 3)];
-      const op2 = ops[getRandomInt(0, 3)];
+      // We'll generate a sequence and validate the result is an integer.
       
-      // We need to be careful with BODMAS.
-      // Let's generate a sequence that is easy to control.
-      // a op1 b op2 c = result
-      b = getRandomInt(2, 15);
-      if (op1 === '/') {
-        a = b * getRandomInt(1, 10);
-      } else if (op1 === '*') {
-        a = getRandomInt(2, 12);
-      } else {
-        a = getRandomInt(10, 50);
-      }
-
-      const val1 = eval(`${a} ${op1} ${b}`);
-      
-      c = getRandomInt(2, 15);
-      if (op2 === '/') {
-        // This is tricky because (a op1 b) / c might not be integer.
-        // Let's avoid op2 being '/' for simplicity in Hard, or ensure val1 is divisible by c.
-        // Or if op1 is + or - and op2 is / or *, BODMAS changes things.
-        // Safer approach: generate numbers first.
-      }
-
       // Refined approach for Hard/Expert:
       // Generate 3 numbers and 2 operators.
       // Check if result is integer.
@@ -129,7 +104,7 @@ export const generateQuestion = (difficulty: Difficulty): Question => {
     case 'Expert': {
       // Level 4 – Expert: Longer equations with 3–4 operations. 18 + ? ÷ 3 × 2 - 5 = 15
       const ops = ['+', '-', '*', '/'];
-      let a, b, c, d, e, result;
+      let a, b, c, d, result;
       let attempts = 0;
       do {
         a = getRandomInt(2, 30);
@@ -147,7 +122,9 @@ export const generateQuestion = (difficulty: Difficulty): Question => {
              parts = [a.toString(), o1, b.toString(), o2, c.toString(), o3, d.toString(), '=', result.toString()];
              break;
           }
-        } catch(e) {}
+        } catch {
+          // Ignore eval errors
+        }
         attempts++;
       } while (attempts < 200);
 
