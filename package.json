@@ -1,8 +1,12 @@
+
 {
   "name": "digit-rush",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "allowScripts": {
+    "esbuild@0.21.5": true
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
